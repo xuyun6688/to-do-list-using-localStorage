@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			
+			.finish{
+				text-decoration: line-through;
+			}
+			
+		</style>
+	</head>
+	<body>
+		
+		<input type="text" placeholder="请输入要做的事件" name="" id="to-do" value="" /> <button id="add-btn" >添加</button>
+		
+		<ul id="to-do-list"></ul>
+		<script type="text/javascript">
+			
+			var addBtn = document.querySelector("#add-btn");
+			var todoInput = document.querySelector("#to-do");
+			var List = document.querySelector("ul");
+			var toDo = [];
+			
+			// 获取localstorage
+			var str = localStorage.getItem('to-do-list');
+			str = str==null?"[]":str;
+			toDo = JSON.parse(str);
+			
+			
+			// 遍历数组，显示存储的事件
+			for (var i=0;i<toDo.length;i++) {
+				var newLi = document.createElement("li");
+					newLi.innerText = toDo[i].todo;
+					newLi.setAttribute('index',i);
+					
+					if(toDo[i].finish){
+						newLi.className = "finish";
+					}
+				List.appendChild(newLi);
+			}
+			
+			// 添加一个事件
+			addBtn.onclick = function(){
+				var str = todoInput.value;
+				if(str==""){
+					alert('请输入内容');
+				}else{
+					
+					var todo = {
+						todo:str,
+						finish:false
+					};
+					
+					toDo.push(todo);
+					var str2 = JSON.stringify(toDo);
+					localStorage.setItem('to-do-list',str2);
+					var newLi = document.createElement("li");
+					newLi.innerText = str;
+					List.appendChild(newLi);
+					todoInput.value = "";
+				}
+			}
+			
+			// 点击事件 已经完成  事件代理
+			List.onclick = function(e){
+				var target = e.target;
+				console.log(e);
+				if(target.localName=="li"){
+					target.className = "finish";
+					var index = target.getAttribute('index');
+					toDo[index].finish = true;
+					var str2 = JSON.stringify(toDo);
+					localStorage.setItem('to-do-list',str2);
+				}
+			}
+		</script>
+	</body>
+</html>
